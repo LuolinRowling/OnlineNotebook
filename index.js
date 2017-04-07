@@ -41,6 +41,9 @@ app.post('/register', function(req, res) {
         password = req.body.password,
         passwordRepeat = req.body.passwordRepeat;
 
+    // TODO: 判断输入的用户是否为空，trim去掉空格
+    // TODO: 判断输入的密码是否为空，trim去掉空格
+    // TODO: 检验输入两次密码是否一样
     User.findOne({username: username}, function(err, user) {
         if (err) {
             console.log(err);
