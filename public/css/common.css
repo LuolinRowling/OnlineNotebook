@@ -8,7 +8,15 @@
     margin-bottom: 30px;
 }
 
+.nav-username,
 .nav-register,
 .nav-login {
     margin: 0 10px;
+}
+
+.js-alert {
+    margin-top: 5px;
+    display: none;
+    color: #a94442;
+    padding-left: 6px;
 }

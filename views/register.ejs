@@ -1,20 +1,28 @@
 <%- include header %>
+	<% if (!success) {%>
+	<script>
+		alert("<%= msg %>");
+	</script>
+	<% }%>
 	<div class="text-center page-title">新用户注册</div>
-	<div class="container">
+	<div class="container js-register">
 		<div class="row">
 			<div class="col-xs-4 col-xs-offset-4">
-				<form method="post">
+				<form id="register-form" method="post">
 					<div class="form-group">
-						<input type="text" class="form-control" name="username" placeholder="用户名">
+						<input type="text" class="form-control js-username" name="username" placeholder="用户名">
+						<p class="js-alert js-username-alert" ></p>
 					</div>
 					<div class="form-group">
-						<input type="password" class="form-control" name="password" placeholder="密码">
+						<input type="password" class="form-control js-password" name="password" placeholder="密码">
+						<p class="js-alert js-password-alert" ></p>
 					</div>
 					<div class="form-group">
-						<input type="password" class="form-control" name="passwordRepeat" placeholder="确认密码">
+						<input type="password" class="form-control js-repeatPassword" name="passwordRepeat" placeholder="确认密码">
+						<p class="js-alert js-repeatpassword-alert" ></p>
 					</div>
-
-					<button type="submit" class="btn btn-default center-block">注册</button>
+					<div class="alert alert-danger js-message" role="alert" style="padding: 6px 12px; display: none">...</div>
+					<button class="btn btn-default center-block js-submit">注册</button>
 				</form>
 			</div>
 		</div>
