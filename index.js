@@ -5,7 +5,8 @@ var express = require('express'),
     mongoose = require('mongoose'),
     models = require('./models/models'), // 引入模型
     session = require('express-session'),
-    moment = require('moment');
+    moment = require('moment'),
+    cookieParser = require('cookie-parser');
 
 var checkLogin = require('./checkLogin.js');
 
@@ -24,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -33,7 +34,8 @@ app.use(session({
     secret: '1234',
     name: 'onlinenotebook',
     cookie: {maxAge: 1000 * 60 * 20 },
-    resave: false,
+    resave: true,
+    rolling: true,
     saveUninitialized: true
 }));
 
@@ -155,7 +157,8 @@ app.get('/login', function(req, res) {
 
 app.post('/login', function(req, res) {
     var username = req.body.username,
-        password = req.body.password;
+        password = req.body.password,
+        weekly = req.body.weekly;
 
     console.log('login')
     User.findOne({username: username}, function(err, user) {
@@ -177,6 +180,12 @@ app.post('/login', function(req, res) {
             return res.redirect('/login');
         }
 
+        if (weekly == 'on') {
+            req.session._garbage = Date();
+            req.session.touch();  
+            req.session.cookie.maxAge = 1000*60*60*24*7;
+        }
+        
         console.log('登陆成功！');
         user.password = null;
         delete user.password;
