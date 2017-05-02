@@ -15,7 +15,8 @@
 					<tr>
 						<td><a href="/detail/<%= note._id %>"><%= note.title %></a></td>
 						<td><%= note.tag %></td>
-						<td><%= note.createTime %></td>
+						<!--<td><%= note.createTime %></td>-->
+						<td><%= moment(note.createTime).locale('zh-cn').format('LL HH:mm:ss') %></td>
 					</tr>
 				<% }); %>
 

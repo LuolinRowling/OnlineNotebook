@@ -6,7 +6,8 @@ var express = require('express'),
     models = require('./models/models'), // 引入模型
     session = require('express-session'),
     moment = require('moment'),
-    cookieParser = require('cookie-parser');
+    cookieParser = require('cookie-parser'),
+    device = require('express-device');
 
 var checkLogin = require('./checkLogin.js');
 
@@ -23,11 +24,15 @@ var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.set('view options', { layout: true });
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(device.capture());
+device.enableDeviceHelpers(app);
+device.enableViewRouting(app);
 
 // 建立 session 模型
 app.use(session({
@@ -51,7 +56,8 @@ app.get('/', function(req, res) {
             res.render('index', {
                 user: req.session.user,
                 title: '首页',
-                notes: allNotes
+                notes: allNotes,
+                moment: moment
             });
         })
 
@@ -77,22 +83,22 @@ app.post('/register', function(req, res) {
         passwordRepeat = req.body.passwordRepeat;
 
     // // TODO: 判断输入的用户是否为空，trim去掉空格
-    // if (username.trim().length == 0) {
-    //     console.log('用户名不能为空!');
-    //     return res.redirect('/register');
-    // }
+    if (username.trim().length == 0) {
+        console.log('用户名不能为空!');
+        return res.redirect('/register');
+    }
     
     // // TODO: 判断输入的密码是否为空，trim去掉空格
-    // if (password.trim().length == 0 || passwordRepeat.trim().length == 0) {
-    //     console.log('密码不能为空！');
-    //     return res.redirect('/register');
-    // }
+    if (password.trim().length == 0 || passwordRepeat.trim().length == 0) {
+        console.log('密码不能为空！');
+        return res.redirect('/register');
+    }
     
     // // TODO: 检验输入两次密码是否一样
-    // if (password != passwordRepeat) {
-    //     console.log('两次输入的密码不一致！');
-    //     return res.redirect('/register');
-    // }
+    if (password != passwordRepeat) {
+        console.log('两次输入的密码不一致！');
+        return res.redirect('/register');
+    }
 
     User.findOne({username: username}, function(err, user) {
         if (err) {
@@ -185,7 +191,7 @@ app.post('/login', function(req, res) {
             req.session.touch();  
             req.session.cookie.maxAge = 1000*60*60*24*7;
         }
-        
+
         console.log('登陆成功！');
         user.password = null;
         delete user.password;
@@ -240,12 +246,18 @@ app.get('/detail/:_id', function(req, res) {
                 return res.redirect('/');
             }
             if (art) {
-                res.render('detail', {
-                    title: '笔记详情',
-                    user: req.session.user,
-                    art: art,
-                    moment: moment
-                });                  
+                if (req.session.user != undefined && req.session.user.username == art.author) {
+                    res.render('detail', {
+                        title: '笔记详情',
+                        user: req.session.user,
+                        art: art,
+                        moment: moment
+                    });  
+                } else {
+                    console.log("无阅读权限！");
+                    return res.redirect("/")
+                }
+                
             }
         })
 
