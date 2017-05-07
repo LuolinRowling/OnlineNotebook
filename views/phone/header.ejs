@@ -4,12 +4,12 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
 		<title><%= title %></title>
-		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/bower_components/weui/dist/style/weui.min.css">
+		<!--<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">-->
+		<link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.7.2/css/amazeui.min.css">
 		<link rel="stylesheet" href="/css/common.css">
 	</head>
 	<body>
-        <div class="clearfix page-nav">
+        <!--<div class="clearfix page-nav">
 			<% if (user) { %>
 				<div class="pull-left nav-username">欢迎你， <%= user.username %>!</div>
 				<div class="pull-left"><a href="/post">发表</a></div>
@@ -18,4 +18,75 @@
 	            <div class="pull-right nav-register"><a href="/register">注册</a></div>
     	        <div class="pull-right nav-login"><a href="/login">登录</a></div>
 			<% } %>
-        </div>
+        </div>-->
+		
+		<header data-am-widget="header" class="am-header am-header-default" style="padding: 0;">
+      		<div class="am-header-left am-header-nav">
+          		<a href="/" class="">
+					<i class="am-header-icon am-icon-home"></i>
+          		</a>
+      		</div>
+			<% if (user) { %>
+				<h1 class="am-header-title">
+					<a href="javascript:void(0);" class="">
+						<%= title %>
+					</a>
+				</h1>
+
+				<div class="am-header-right am-header-nav">
+					<a href="javascript:void(0);" class="" data-am-collapse="{target: '#collapse-head'}">
+						<i class="am-header-icon am-icon-bars"></i>
+					</a>
+				</div>
+
+				<div class="am-collapse am-topbar-collapse dropdown" id="collapse-head" style="background: #fff;">
+
+					<div class="am-topbar-right">
+						<a style="color: #fff;" href="/post">
+							<button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm">
+								<span class="am-icon-pencil"></span> 发表
+							</button>
+						</a>
+					</div>
+
+					<div class="am-topbar-right">
+						<a style="color: #fff;" href="/quit">
+							<button class="am-btn am-btn-primary am-topbar-btn am-btn-sm">
+								<span class="am-icon-user"></span> 退出
+							</button>
+						</a>
+					</div>
+				</div>
+			<% } else { %>
+				<h1 class="am-header-title">
+					<a href="javascript:void(0);" class="">
+						<%= title %>
+					</a>
+				</h1>
+
+				<div class="am-header-right am-header-nav">
+					<a href="javascript:void(0);" class="" data-am-collapse="{target: '#collapse-head'}">
+						<i class="am-header-icon am-icon-bars"></i>
+					</a>
+				</div>
+
+				<div class="am-collapse am-topbar-collapse dropdown" id="collapse-head" style="background: #fff;">
+
+					<div class="am-topbar-right">
+						<a style="color: #fff;" href="/register">
+							<button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm">
+								<span class="am-icon-pencil"></span> 注册
+							</button>
+						</a>
+					</div>
+
+					<div class="am-topbar-right">
+						<a style="color: #fff;" href="/login">
+							<button class="am-btn am-btn-primary am-topbar-btn am-btn-sm">
+								<span class="am-icon-user"></span> 登录
+							</button>
+						</a>
+					</div>
+				</div>
+			<% } %>
+		</header>

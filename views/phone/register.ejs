@@ -1,6 +1,11 @@
 <%- include header %>
-    <div class="am-g am-container l-container">
-        <form method="post">
+	<% if (!success) {%>
+	<script>
+		alert("<%= msg %>");
+	</script>
+	<% }%>
+    <div class="am-g am-container l-container js-register">
+        <form id="register-form" method="post">
             <div class="am-input-group am-input-group-secondary l-input">
                 <span class="am-input-group-label"><i class="am-icon-user am-icon-fw"></i></span>
                 <input type="text" class="am-form-field js-username" name="username" placeholder="用户名">
@@ -10,14 +15,15 @@
                 <span class="am-input-group-label"><i class="am-icon-lock am-icon-fw"></i></span>
                 <input type="password" class="am-form-field js-password" name="password" placeholder="密码">
             </div>
-            <p class="js-alert js-message" style="padding: 0 10px;color:#dd514c;"></p>
-            <div class="am-checkbox l-input">
-                <label>
-                    <input type="checkbox" name="weekly"> 一周内免登陆
-                </label>
+            <p class="js-alert js-password-alert" style="padding: 0 10px;color:#dd514c;"></p>
+            <div class="am-input-group am-input-group-secondary l-input">
+                <span class="am-input-group-label"><i class="am-icon-lock am-icon-fw"></i></span>
+                <input type="password" class="am-form-field js-repeatPassword" name="passwordRepeat" placeholder="确认密码">
             </div>
+            <p class="js-alert js-repeatpassword-alert" style="padding: 0 10px;color:#dd514c;"></p>
+
             <div style="margin:0 10px;">
-               <button type="submit" class="am-btn am-btn-primary am-btn-block">登录</button>
+               <button type="submit" class="am-btn am-btn-primary am-btn-block js-submit">注册</button>
             </div>
         </form>
     </div>

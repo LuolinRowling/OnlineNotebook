@@ -20,3 +20,22 @@
     color: #a94442;
     padding-left: 6px;
 }
+
+.l-container {
+    margin-top: 20px;
+
+}
+
+.l-input {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+header .dropdown {
+    position: absolute;
+    z-index: 9999;
+    /*margin-top: -10px;*/
+    padding-top: 0px;
+    border-bottom: 1px solid #ddd;
+}

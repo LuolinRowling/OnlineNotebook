@@ -55,7 +55,7 @@ app.get('/', function(req, res) {
             }
             res.render('index', {
                 user: req.session.user,
-                title: '首页',
+                title: !req.session.user ? '日记本' : req.session.user.username + '的日记本',
                 notes: allNotes,
                 moment: moment
             });
