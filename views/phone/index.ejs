@@ -1,0 +1,24 @@
+<%- include header %>
+    <div class="am-g am-container l-container-s">
+    <table class="am-table am-table-striped am-table-hover">
+        <thead>
+            <tr>
+                <td>标题</td>
+                <td>标签</td>
+                <td>日期</td>
+            </tr>
+        </thead>
+        <tbody>
+            <% notes.forEach(function(note) { %>
+                <tr>
+                    <td><a href="/detail/<%= note._id %>"><%= note.title %></a></td>
+                    <td><%= note.tag %></td>
+                    <!--<td><%= note.createTime %></td>-->
+                    <td><%= moment(note.createTime).locale('zh-cn').format('LL HH:mm:ss') %></td>
+                </tr>
+            <% }); %>
+
+        </tbody>
+    </table>
+    </div>   
+<%- include footer %>

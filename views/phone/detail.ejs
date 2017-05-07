@@ -1,0 +1,10 @@
+<%- include header %>
+    <div class="am-g am-container l-container l-input">
+        <h1><%= art.title %></h1>
+        <div style="margin-bottom:5px;"><span class="am-badge am-badge-secondary am-radius"><%= art.tag %></span></div>    
+        <span class="create-time">
+            <%= moment(art.createTime).locale('zh-cn').format('LL HH:mm:ss') %>
+        </span>        
+        <p><%= art.content %></p>
+    </div>
+<%- include footer %>
