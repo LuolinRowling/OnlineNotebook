@@ -9,6 +9,50 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     device = require('express-device');
 
+var Waterline = require('waterline');
+var mysqlAdapter = require('sails-mysql');
+var mongoAdapter = require('sails-mongo');
+
+var Model = require('./models/model');
+
+// 适配器
+var adapters = {
+    mongo: mongoAdapter,
+    mysql: mysqlAdapter,
+    default: 'mongo'
+};
+
+// 连接设置
+var connections = {
+    mongo: {
+        adapter: 'mongo',
+        url: 'mongodb://localhost:27017/notes'
+    },
+    mysql: {
+        adapter: 'mysql',
+        url: 'mysql://root:caloline@localhost/notes'
+    }
+};
+
+var orm = new Waterline();
+
+orm.loadCollection(Model.User);
+
+var config = {
+    adapters: adapters,
+    connections: connections
+}
+var ModelsInstance;
+
+orm.initialize(config, function(err, Models){
+    if(err) {
+        console.error('orm initialize failed.', err)
+        return;
+    }
+
+    ModelsInstance = Models;
+});
+
 var checkLogin = require('./checkLogin.js');
 
 var port = 27017;
@@ -100,7 +144,11 @@ app.post('/register', function(req, res) {
         return res.redirect('/register');
     }
 
-    User.findOne({username: username}, function(err, user) {
+
+
+    ModelsInstance.collections.user.find({
+        username: username
+    }).exec(function(err, user) {
         if (err) {
             console.log(err);
             // return res.redirect('/register');
@@ -111,8 +159,7 @@ app.post('/register', function(req, res) {
                 msg: "注册失败，请重试！"
             });
         }
-
-        if (user) {
+        if (user.length != 0) {
             console.log('用户名已存在');
             //return res.redirect('/register');
             return res.render('register', {
@@ -122,16 +169,11 @@ app.post('/register', function(req, res) {
                 msg: "用户名已存在"
             });
         }
-
+        
         var md5 = crypto.createHash('md5'),
-            md5password = md5.update(password).digest('hex');
+        md5password = md5.update(password).digest('hex');
 
-        var newUser = new User({
-            username: username,
-            password: md5password
-        });
-
-        newUser.save(function(err, doc) {
+        ModelsInstance.collections.user.create({username: username, password: md5password}, function(err, user) {
             if (err) {
                 console.log(err);
                 // return res.redirect('/register');
@@ -144,8 +186,55 @@ app.post('/register', function(req, res) {
             }
             console.log('注册成功！');
             return res.redirect('/');
-        })
-    });
+        });
+    })
+
+    // User.findOne({username: username}, function(err, user) {
+    //     if (err) {
+    //         console.log(err);
+    //         // return res.redirect('/register');
+    //         return res.render('register', {
+    //             user: req.session.user,
+    //             title: '注册',
+    //             success: false,
+    //             msg: "注册失败，请重试！"
+    //         });
+    //     }
+
+    //     if (user) {
+    //         console.log('用户名已存在');
+    //         //return res.redirect('/register');
+    //         return res.render('register', {
+    //             user: req.session.user,
+    //             title: '注册',
+    //             success: false,
+    //             msg: "用户名已存在"
+    //         });
+    //     }
+
+    //     var md5 = crypto.createHash('md5'),
+    //         md5password = md5.update(password).digest('hex');
+
+    //     var newUser = new User({
+    //         username: username,
+    //         password: md5password
+    //     });
+
+    //     newUser.save(function(err, doc) {
+    //         if (err) {
+    //             console.log(err);
+    //             // return res.redirect('/register');
+    //             return res.render('register', {
+    //                 user: req.session.user,
+    //                 title: '注册',
+    //                 success: false,
+    //                 msg: "注册失败，请重试！"
+    //             });
+    //         }
+    //         console.log('注册成功！');
+    //         return res.redirect('/');
+    //     })
+    // });
 });
 
 app.get('/login', function(req, res) {
@@ -167,13 +256,17 @@ app.post('/login', function(req, res) {
         weekly = req.body.weekly;
 
     console.log('login')
-    User.findOne({username: username}, function(err, user) {
+
+
+    ModelsInstance.collections.user.find({
+        username: username
+    }).exec(function(err, user) {
         if (err) {
             console.log(err);
             return res.redirect('/login');
         }
 
-        if (!user) {
+        if (user.length == 0) {
             console.log('用户不存在！');
             return res.redirect('/login');
         }
@@ -181,6 +274,8 @@ app.post('/login', function(req, res) {
         var md5 = crypto.createHash('md5'),
             md5password = md5.update(password).digest('hex');
 
+        user = user[0];
+        
         if (user.password !== md5password) {
             console.log('密码错误！');
             return res.redirect('/login');
@@ -197,7 +292,40 @@ app.post('/login', function(req, res) {
         delete user.password;
         req.session.user = user;
         return res.redirect('/');
-    })    
+    })
+
+
+    // User.findOne({username: username}, function(err, user) {
+    //     if (err) {
+    //         console.log(err);
+    //         return res.redirect('/login');
+    //     }
+
+    //     if (!user) {
+    //         console.log('用户不存在！');
+    //         return res.redirect('/login');
+    //     }
+
+    //     var md5 = crypto.createHash('md5'),
+    //         md5password = md5.update(password).digest('hex');
+
+    //     if (user.password !== md5password) {
+    //         console.log('密码错误！');
+    //         return res.redirect('/login');
+    //     }
+
+    //     if (weekly == 'on') {
+    //         req.session._garbage = Date();
+    //         req.session.touch();  
+    //         req.session.cookie.maxAge = 1000*60*60*24*7;
+    //     }
+
+    //     console.log('登陆成功！');
+    //     user.password = null;
+    //     delete user.password;
+    //     req.session.user = user;
+    //     return res.redirect('/');
+    // })    
 });
 
 app.get('/quit', function(req, res) {
